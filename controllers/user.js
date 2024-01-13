@@ -1,18 +1,26 @@
-import {v4 as uuid} from 'uuid';
+import {v4 as uuidv4} from "uuid";
 
-let users = []
+let users = [ ]
 
 export const getuserName = (req,res) =>{
 
-    res.send(users);
+    return res.send({
+        users,
+    })
 }
 export  const postuserName = (req,res) =>{
-    const user = req.body;
+    const data = req.body.data;
 
-    users.push({...user,id: uuid() });
+    let postman ={
+        id: uuidv4(),
+        data,
+    }
 
-    res.send(`adding new name ${user.fname} add`);
+    users.push(postman);
 
+   return res.json({
+    message:"happy ending"
+   })
 }
 export  const getusersName = (req,res) =>{
     const { id } = req.params
@@ -24,22 +32,25 @@ export  const getusersName = (req,res) =>{
 export const deletuserName = (req,res)=>{
     const { id } = req.params
 
-    users = users.filter((users)=> users.id !== id )
+   let index = users.findIndex((users)=> users.id === id )
+
+    users.splice(index, 1);
 
     res.send(`succesfully delited ${users.fname}`)
 }
 export const patchuserName = (req,res)=>{
     const { id } = req.params
-    const {fname,lname,age} = req.body
-    const user = users.find((user) => user.id === id)
-    
-    if(fname) user.fname = fname;
+    const data = req.body.data;
+    const isComplet =req.body.isComplet;
+    const dataIndex = users.findIndex((user) => user.id === id)
 
-    if(lname) user.lname = lname;
+    users[dataIndex].data = data;
+    users[dataIndex].isComplet = isComplet;
     
-    if(age) user.age = age;
-
-    res.send(`user has modifing  ${id} `)
+  
+   return res.json({
+    message:"data updated"
+   })
 
 
 }

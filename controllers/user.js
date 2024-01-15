@@ -1,21 +1,23 @@
 import {v4 as uuidv4} from "uuid";
+// import connect from '../config/db.js'
 
-let users = [ ]
+let users = []
 
 export const getuserName = (req,res) =>{
 
-    return res.send({
-        users,
-    })
-}
+        return res.json({
+            status:true,
+            users,
+            
+          })
+    }
 export  const postuserName = (req,res) =>{
-    const data = req.body.data;
+    const datas = req.body.datas;
 
     let postman ={
         id: uuidv4(),
-        data,
+        datas,
     }
-
     users.push(postman);
 
    return res.json({

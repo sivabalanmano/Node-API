@@ -1,28 +1,47 @@
 import {v4 as uuidv4} from "uuid";
-// import connect from '../config/db.js'
+import connection from "../config/db.js";
+import sqlSring from "sqlstring"
 
-let users = []
+
 
 export const getuserName = (req,res) =>{
+    let query = sqlSring.format("SELECT * FROM  users");
 
+    connection.query(query,(err,result)=>{
+        if(err){
+            return res.json({
+                status:true,
+                message:"somting went Wrong",
+            });
+        }
+        let users = result;
+        for(let i=0; i<users.length;i++){
+           users[i].isComplet = users[i].isComplet == 1 ? true : false ;
+        }
         return res.json({
             status:true,
-            users,
-            
+            users,  
           })
-    }
+    }) 
+ }
 export  const postuserName = (req,res) =>{
     const datas = req.body.datas;
 
-    let postman ={
-        id: uuidv4(),
-        datas,
-    }
-    users.push(postman);
+    let query =sqlSring.format("INSERT INTO users (datas) value  (?)",[datas]);
+    connection.query(query,(err,result)=>{
+        if(err){
+           console.log(err);
 
-   return res.json({
-    message:"happy ending"
-   })
+           return res.json({
+            status:false,
+            message:"somting went wrong",
+           })
+        }
+        return res.json({
+            status:true,
+            message:"happy ending"
+           })
+    }) 
 }
 export  const getusersName = (req,res) =>{
     const { id } = req.params
@@ -32,27 +51,43 @@ export  const getusersName = (req,res) =>{
     res.send(finding)
 }
 export const deletuserName = (req,res)=>{
-    const { id } = req.params
+    const id = req.params.id;
 
-   let index = users.findIndex((users)=> users.id === id )
+    let query =sqlSring.format(`DELETE FROM users WHERE id = ?`,[id]);
 
-    users.splice(index, 1);
-
-    res.send(`succesfully delited ${users.fname}`)
+    connection.query(query,(err,result)=>{
+        if (err){
+            console.log(err)
+            return res.json({
+                status:false,
+                message:"someting went wrong"
+            })
+        }
+        return res.json({
+            status:true,
+            message:"task deleted sucessfully"
+        })
+    })
 }
 export const patchuserName = (req,res)=>{
-    const { id } = req.params
-    const data = req.body.data;
+    const  id = req.params.id ;
+    const datas = req.body.datas;
     const isComplet =req.body.isComplet;
-    const dataIndex = users.findIndex((user) => user.id === id)
-
-    users[dataIndex].data = data;
-    users[dataIndex].isComplet = isComplet;
-    
-  
-   return res.json({
-    message:"data updated"
-   })
-
-
+    let query = sqlSring.format(
+        `UPDATE users SET datas = ?, isComplet = ? WHERE id = ?`,
+        [datas,isComplet,id]
+        );
+        connection.query(query,(err,results)=>{
+            if(err){
+                console.log(err)
+                return res.json({
+                    status:false,
+                    message:"somting went wrong"
+                });
+            }
+            return res.json({
+                status:true,
+                message:"data updated"
+               })
+        }) 
 }

@@ -20,6 +20,9 @@ dependencies:
   nodemon:
     specifier: ^3.0.2
     version: 3.0.2
+  sqlstring:
+    specifier: ^2.3.3
+    version: 2.3.3
   uuid:
     specifier: ^9.0.1
     version: 9.0.1

@@ -75,14 +75,14 @@ export const patchuserName = (req,res)=>{
     const isComplet =req.body.isComplet;
     let query = sqlSring.format(
         `UPDATE users SET datas = ?, isComplet = ? WHERE id = ?`,
-        [datas,isComplet,id]
+        [datas, isComplet, id]
         );
         connection.query(query,(err,results)=>{
             if(err){
                 console.log(err)
                 return res.json({
                     status:false,
-                    message:"somting went wrong"
+                    message:err.message
                 });
             }
             return res.json({
